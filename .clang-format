@@ -1,0 +1,12 @@
+# .clang-format
+BasedOnStyle: LLVM
+ColumnLimit: 80
+IndentWidth: 4
+PointerAlignment: Left
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterFunction: false      # Braces on same line for functions
+  AfterControlStatement: false  # Braces on same line for if/while/for
+  AfterStruct: false
+AllowShortBlocksOnASingleLine: Empty  # Allow {} on one line
+AllowShortIfStatementsOnASingleLine: true  # Always use braces
