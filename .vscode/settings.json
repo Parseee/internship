@@ -13,5 +13,6 @@
             "binaryPath": "${workspaceFolder}/build/graphs",
             "binaryArgs": []
         }
-    ]
+    ],
+    "todo-tree.tree.showBadges": true
 }

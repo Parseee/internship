@@ -6,7 +6,7 @@
  - [x] add node 
  - [x] remove node 
  - [x] add edge 
- - [ ] remove node 
+ - [x] remove node 
  - [ ] test gen
 
 #### Shortest paths

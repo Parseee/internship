@@ -20,8 +20,10 @@ class Node {
     void addInEdge(const std::shared_ptr<Edge> edge);
     void addOutEdge(const std::shared_ptr<Edge> edge);
 
-    friend bool removeInEdge(const std::string& from, const std::string& to);
-    // bool removeOutEdge(const std::shared_ptr<Edge> edge);
+    void removeInEdge(const std::shared_ptr<Edge> edge);
+    void removeOutEdge(const std::shared_ptr<Edge> edge);
+
+    void clearEdges();
 
     // friend bool hasInEdgeFrom(const std::string& node_id);
     // friend bool hasOutEdgeTo(const std::string& node_id);
