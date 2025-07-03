@@ -7,7 +7,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_library(project_compiler_options INTERFACE)
 target_compile_options(project_compiler_options INTERFACE
-    $<$<CONFIG:Debug>:-Wall -Wextra -fno-omit-frame-pointer -fsanitize=address,leak>
+    $<$<CONFIG:Debug>:-Wall -Wextra -g -fno-omit-frame-pointer -fsanitize=address,leak>
     $<$<CONFIG:Release>:-O2>
 )
 
@@ -22,10 +22,12 @@ set(SOURCES
     src/graph.cpp
     include/graph.h
     src/node.cpp
+    include/node.h
+    src/edge.cpp
     include/edge.h)
 
-set(DEPS
-    My_graph)
+# set(DEPS
+#     My_graph)
     
 add_executable(${PROJECT_NAME} ${SOURCES})
 # add target_link_options

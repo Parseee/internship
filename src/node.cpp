@@ -1,5 +1,8 @@
 #include "node.h"
+#include <algorithm>
 #include <memory>
+
+Node::Node(std::string id) : id(id) {}
 
 const std::string& Node::getId() const { return id; }
 
@@ -18,3 +21,6 @@ void Node::addInEdge(std::shared_ptr<Edge> edge) {
 void Node::addOutEdge(std::shared_ptr<Edge> edge) {
     this->out_edges.push_back(edge);
 }
+
+
+// bool Node::removeOutEdge(const std::shared_ptr<Edge> edge);
