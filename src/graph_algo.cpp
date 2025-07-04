@@ -126,25 +126,29 @@ uint64_t Graph::maxFlow(std::string start_id, std::string end_id) {
             visited[cur_node] = IN;
         }
 
-        for (auto edge_it = cur_node->getOutEdges().rbegin();
-             edge_it != cur_node->getOutEdges().rend(); ++edge_it) {
-            auto edge = *edge_it;
+        for (auto edge : cur_node->getOutEdges()) {
             if (visited[edge->getTo()] == NIL &&
                 flow[edge].forward < edge->getWeight()) {
-                int64_t delta = std::min(min_flow.top(),
-                                         edge->getWeight() - flow[edge].forward);
+                int64_t delta = std::min(
+                    min_flow.top(), edge->getWeight() - flow[edge].forward);
                 if (delta > 0) {
                     flow[edge].forward += delta;
                     flow[edge].backward -= delta;
                 }
                 dfs.push(edge->getTo());
+                min_flow.push(std::min(min_flow.top(), edge->getWeight()));
             } else {
                 std::cout << "Found loop " + start_node_ptr->getId() + " -> " +
                                  cur_node->getId()
                           << std::endl;
             }
         }
-
         visited[cur_node] = OUT;
     }
+    
+    uint64_t res = 0;
+    for (auto edge : end_node_ptr->getInEdges()) {
+        res += flow[edge].forward;
+    }
+    return res;
 }

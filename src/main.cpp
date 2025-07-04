@@ -36,12 +36,16 @@ int main() {
         graph.addNode("c");
         graph.addNode("d");
         graph.addNode("e");
-        graph.addEdge("a", "b", 10);
-        graph.addEdge("a", "e", 10);
-        graph.addEdge("b", "c", 15);
-        graph.addEdge("b", "d", 10);
-        graph.addEdge("c", "a", 10);
-        graph.addEdge("d", "a", 10);
+        graph.addNode("f");
+        graph.addEdge("a", "b", 7);
+        graph.addEdge("a", "c", 4);
+        graph.addEdge("b", "c", 4);
+        graph.addEdge("b", "e", 2);
+        graph.addEdge("c", "e", 8);
+        graph.addEdge("c", "d", 4);
+        graph.addEdge("d", "f", 12);
+        graph.addEdge("e", "d", 4);
+        graph.addEdge("e", "f", 5);
         for (auto [node, dist] : graph.shortestPaths("a")) {
             std::cout << node->getId() << " " << dist << std::endl;
         }
@@ -49,6 +53,7 @@ int main() {
         for (auto node : graph.RPO("a")) {
             std::cout << node->getId() << " ";
         }
+        std::cout << graph.maxFlow("a", "f") << std::endl;
     } catch (const std::exception& e) {
         std::cout << e.what() << std::endl;
     }
