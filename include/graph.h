@@ -27,6 +27,7 @@ class Graph {
     std::vector<std::shared_ptr<Node>> RPO(std::string id) const noexcept;
     std::unordered_map<std::shared_ptr<Node>, uint64_t>
     shortestPaths(std::string id) const noexcept;
+    uint64_t maxFlow(std::string start_id, std::string end_id);
 
     void dump();
 

@@ -19,12 +19,12 @@ class Edge {
   public:
     Edge() {};
     Edge(std::shared_ptr<Node> from, std::shared_ptr<Node> to,
-         size_t weight = 0)
+         uint64_t weight = 0)
         : from(from), to(to), weight(weight) {}
 
     const std::shared_ptr<Node> getFrom() const noexcept;
     const std::shared_ptr<Node> getTo() const noexcept;
-    size_t getWeight() const;
+    uint64_t getWeight() const;
 
     bool isEqual(const std::string& from, const std::string& to) const noexcept;
 
@@ -38,5 +38,5 @@ class Edge {
   private:
     std::weak_ptr<Node> from;
     std::weak_ptr<Node> to;
-    size_t weight;
+    uint64_t weight;
 };

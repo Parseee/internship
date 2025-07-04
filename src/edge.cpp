@@ -1,7 +1,7 @@
 #include "edge.h"
 #include <memory>
 
-size_t Edge::getWeight() const { return this->weight; }
+uint64_t Edge::getWeight() const { return this->weight; }
 
 const std::shared_ptr<Node> Edge::getFrom() const noexcept {
     return from.lock();
