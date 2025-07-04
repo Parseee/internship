@@ -1,5 +1,7 @@
+#include <cstdint>
 #include <iostream>
 #include <memory>
+#include <set>
 #include <stack>
 #include <string>
 #include <unordered_map>
@@ -50,3 +52,39 @@ std::vector<std::shared_ptr<Node>> Graph::RPO(std::string id) const noexcept {
 
     return traversal;
 }
+
+std::unordered_map<std::shared_ptr<Node>, uint64_t>
+Graph::shortestPaths(std::string id) const noexcept {
+    auto start_node_ptr = getNode(id);
+
+    if (start_node_ptr == nullptr) {
+        std::cout << "Unknown node " + id << std::endl;
+    }
+
+    std::unordered_map<std::shared_ptr<Node>, uint64_t> dist;
+    for (auto node : nodes) {
+        dist[node.second] = INT64_MAX;
+    }
+    dist[start_node_ptr] = 0;
+    std::set<std::pair<uint64_t, std::shared_ptr<Node>>> priority;
+
+    priority.insert({0, start_node_ptr});
+
+    while (!priority.empty()) {
+        auto cur_node_ptr = priority.begin()->second;
+        priority.erase(priority.begin());
+
+        for (auto edge : cur_node_ptr->getOutEdges()) {
+            if (dist[edge->getFrom()] != INT64_MAX &&
+                dist[edge->getTo()] >
+                    dist[edge->getFrom()] + edge->getWeight()) {
+                priority.erase({dist[edge->getTo()], edge->getTo()});
+                dist[edge->getTo()] = dist[edge->getFrom()] + edge->getWeight();
+                priority.insert({dist[edge->getTo()], edge->getTo()});
+            }
+        }
+    }
+
+    return dist;
+}
+

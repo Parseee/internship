@@ -5,8 +5,8 @@
 #include <string>
 #include <unordered_map>
 
-#include "node.h"
 #include "edge.h"
+#include "node.h"
 
 class Graph {
   public:
@@ -22,9 +22,11 @@ class Graph {
     std::shared_ptr<Edge> getEdge(const std::string& from_id,
                                   const std::string& to_id) const noexcept;
     bool containsEdge(const std::string& from_id,
-                                       const std::string& to_id) const noexcept;
+                      const std::string& to_id) const noexcept;
 
     std::vector<std::shared_ptr<Node>> RPO(std::string id) const noexcept;
+    std::unordered_map<std::shared_ptr<Node>, uint64_t>
+    shortestPaths(std::string id) const noexcept;
 
     void dump();
 

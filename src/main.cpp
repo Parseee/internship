@@ -42,14 +42,14 @@ int main() {
         graph.addEdge("b", "d", 10);
         graph.addEdge("c", "a", 10);
         graph.addEdge("d", "a", 10);
-        // graph.addEdge("d", "a", 10);
+        for (auto [node, dist] : graph.shortestPaths("a")) {
+            std::cout << node->getId() << " " << dist << std::endl;
+        }
         graph.dump();
-        // graph.removeEdge("a", "b");
         for (auto node : graph.RPO("a")) {
             std::cout << node->getId() << " ";
         }
-        // graph.dump();
-    } catch(const std::exception& e) {
+    } catch (const std::exception& e) {
         std::cout << e.what() << std::endl;
     }
 }
