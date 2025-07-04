@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <fstream>
 #include <iostream>
 #include <memory>
 #include <string>
@@ -14,10 +13,7 @@ bool Graph::addNode(const std::string& id) {
         return false;
     }
     nodes[id] = std::make_shared<Node>(id);
-
-    for (auto u : nodes) {
-        std::cout << u.first << std::endl;
-    }
+    
     return true;
 }
 
@@ -66,7 +62,7 @@ bool Graph::addEdge(const std::string& from_id, const std::string& to_id,
     from_it->second->addOutEdge(edge);
     to_it->second->addInEdge(edge);
 
-    // edges.insert(edge);
+    edges.push_back(edge);
 
     return true;
 }
@@ -89,58 +85,44 @@ bool Graph::removeEdge(const std::string& from_id, const std::string& to_id) {
     std::shared_ptr<Node> from_node = from_it->second;
     std::shared_ptr<Node> to_node = to_it->second;
 
-    auto from_edge = std::find_if(
+    auto from_edge_it = std::find_if(
         from_node->getOutEdges().begin(), from_node->getOutEdges().end(),
-        [from_id, to_id](const std::shared_ptr<Edge>& edge_ptr) {
+        [&](const std::shared_ptr<Edge>& edge_ptr) {
             return edge_ptr->isEqual(from_id, to_id);
         });
-    auto to_edge =
+    auto to_edge_it =
         std::find_if(to_node->getInEdges().begin(), to_node->getInEdges().end(),
-                     [from_id, to_id](const std::shared_ptr<Edge>& edge_ptr) {
+                     [&](const std::shared_ptr<Edge>& edge_ptr) {
                          return edge_ptr->isEqual(from_id, to_id);
                      });
 
-    if (from_edge == from_node->getOutEdges().end() ||
-        to_edge == to_node->getInEdges().end()) {
+    if (from_edge_it == from_node->getOutEdges().end() ||
+        to_edge_it == to_node->getInEdges().end()) {
         return false;
     }
-    from_node->removeOutEdge(*from_edge);
-    to_node->removeInEdge(*to_edge);
+    edges.erase(std::remove_if(edges.begin(), edges.end(), [&](auto edge) {
+        return edge.lock()->isEqual(from_id, to_id);
+    }));
+    from_node->removeOutEdge(*from_edge_it);
+    to_node->removeInEdge(*to_edge_it);
 
     return true;
 }
 
-// std::shared_ptr<Edge> Graph::getEdge(const std::string& from,
-//                                   const std::string& to) const noexcept {
-//                                     return
-//                                   }
+std::shared_ptr<Edge> Graph::getEdge(const std::string& from_id,
+                                     const std::string& to_id) const noexcept {
+    auto edge_it = std::find_if(edges.begin(), edges.end(), [&](auto edge) {
+        return edge.lock()->isEqual(from_id, to_id);
+    });
 
-// TODO: contains edge
-
-void Graph::dump() {
-
-    std::ofstream graph_dump("graph.dot");
-
-    // TODO: make directed
-    graph_dump << "strict digraph GG {" << std::endl
-               << "node [shape=circle];" << std::endl;
-
-    graphPrint(graph_dump);
-
-    graph_dump << "}" << std::endl;
-
-    system("dot -Tpdf graph.dot -o graph.pdf");
+    return (edge_it == edges.end()) ? edge_it->lock() : nullptr;
 }
 
-void Graph::graphPrint(std::ofstream& graph_dump) const noexcept {
-    for (auto node : nodes) {
-        graph_dump << node.first << std::endl;
+bool Graph::containsEdge(const std::string& from_id,
+                         const std::string& to_id) const noexcept {
+    auto edge_it = std::find_if(edges.begin(), edges.end(), [&](auto edge) {
+        return edge.lock()->isEqual(from_id, to_id);
+    });
 
-        for (auto edge : node.second->getOutEdges()) {
-            graph_dump << "  \"" + edge->getFrom()->getId() + "\" -> \"" +
-                              edge->getTo()->getId() + "\"[label=\"" +
-                              std::to_string(edge->getWeight()) + "\"];"
-                       << std::endl;
-        }
-    }
+    return edge_it != edges.end();
 }

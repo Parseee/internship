@@ -33,9 +33,22 @@ int main() {
     try {
         graph.addNode("a");
         graph.addNode("b");
+        graph.addNode("c");
+        graph.addNode("d");
+        graph.addNode("e");
         graph.addEdge("a", "b", 10);
-        graph.removeEdge("a", "b");
+        graph.addEdge("a", "e", 10);
+        graph.addEdge("b", "c", 15);
+        graph.addEdge("b", "d", 10);
+        graph.addEdge("c", "a", 10);
+        graph.addEdge("d", "a", 10);
+        // graph.addEdge("d", "a", 10);
         graph.dump();
+        // graph.removeEdge("a", "b");
+        for (auto node : graph.RPO("a")) {
+            std::cout << node->getId() << " ";
+        }
+        // graph.dump();
     } catch(const std::exception& e) {
         std::cout << e.what() << std::endl;
     }

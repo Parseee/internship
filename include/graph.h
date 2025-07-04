@@ -1,11 +1,12 @@
 #pragma once
 
+#include <list>
 #include <memory>
 #include <string>
 #include <unordered_map>
-#include <set>
 
 #include "node.h"
+#include "edge.h"
 
 class Graph {
   public:
@@ -18,19 +19,18 @@ class Graph {
     bool addEdge(const std::string& from, const std::string& to,
                  int weight) noexcept;
     bool removeEdge(const std::string& from, const std::string& to);
-    // std::shared_ptr<Edge> getEdge(const std::string& from,
-    //                               const std::string& to) const noexcept;
+    std::shared_ptr<Edge> getEdge(const std::string& from_id,
+                                  const std::string& to_id) const noexcept;
+    bool containsEdge(const std::string& from_id,
+                                       const std::string& to_id) const noexcept;
 
-    // const std::unordered_map<std::string, std::shared_ptr<Node>>&
-    // getNodes() const;
-    // const std::unordered_map<std::string, std::weak_ptr<Edge>>&
-    // getEdges() const;
+    std::vector<std::shared_ptr<Node>> RPO(std::string id) const noexcept;
 
     void dump();
 
   private:
     std::unordered_map<std::string, std::shared_ptr<Node>> nodes;
-    std::set<std::weak_ptr<Edge>> edges;
+    std::list<std::weak_ptr<Edge>> edges;
 
     void graphPrint(std::ofstream& graph_dump) const noexcept;
 };

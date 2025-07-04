@@ -19,19 +19,18 @@ include_directories(src include)
 
 set(SOURCES 
     src/main.cpp
-    src/graph.cpp
     include/graph.h
-    src/node.cpp
+    src/graph.cpp
+    src/graph_dump.cpp
+    src/graph_algo.cpp
     include/node.h
-    src/edge.cpp
-    include/edge.h)
+    src/node.cpp
+    include/edge.h
+    src/edge.cpp)
 
-# set(DEPS
-#     My_graph)
     
 add_executable(${PROJECT_NAME} ${SOURCES})
 # add target_link_options
 target_link_libraries(${PROJECT_NAME} PRIVATE project_compiler_options 
     $<$<CONFIG:Debug>:-fsanitize=address,leak>  
-    $<$<CONFIG:Release>:-O2> 
-    ${DEPS})
+    $<$<CONFIG:Release>:-O2>)
