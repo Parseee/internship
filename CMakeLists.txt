@@ -13,10 +13,6 @@ target_compile_options(project_compiler_options INTERFACE
 
 include_directories(src include)
 
-# add_subdirectory(libs/My_list)
-# add_subdirectory(libs/My_table)
-# add_subdirectory(libs/My_graph)
-
 set(SOURCES 
     src/main.cpp
     include/graph.h

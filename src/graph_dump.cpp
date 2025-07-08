@@ -18,10 +18,10 @@ void Graph::dump() {
 }
 
 void Graph::graphPrint(std::ofstream& graph_dump) const noexcept {
-    for (auto node : nodes) {
+    for (const auto& node : nodes) {
         graph_dump << node.first << std::endl;
 
-        for (auto edge : node.second->getOutEdges()) {
+        for (const auto& edge : node.second->getOutEdges()) {
             graph_dump << "  \"" + edge->getFrom()->getId() + "\" -> \"" +
                               edge->getTo()->getId() + "\"[label=\"" +
                               std::to_string(edge->getWeight()) + "\"];"
