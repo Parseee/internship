@@ -115,7 +115,7 @@ std::shared_ptr<Edge> Graph::getEdge(const std::string& from_id,
         return edge.lock()->isEqual(from_id, to_id);
     });
 
-    return (edge_it == edges.end()) ? edge_it->lock() : nullptr;
+    return (edge_it != edges.end()) ? edge_it->lock() : nullptr;
 }
 
 bool Graph::containsEdge(const std::string& from_id,

@@ -4,7 +4,7 @@
 #include "edge.h"
 #include "node.h"
 
-Node::Node(std::string id) : id(id) {}
+Node::Node(const std::string& id) : id(id) {}
 
 const std::string& Node::getId() const { return id; }
 
@@ -41,13 +41,13 @@ void Node::clearEdges() {
     in_edges.clear();
     out_edges.clear();
 
-    for (auto& edge : in_copy) {
+    for (const auto& edge : in_copy) {
         if (auto from = edge->getFrom()) {
             from->removeOutEdge(edge);
         }
     }
 
-    for (auto& edge : out_copy) {
+    for (const auto& edge : out_copy) {
         if (auto to = edge->getTo()) {
             to->removeInEdge(edge);
         }

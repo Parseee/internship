@@ -9,7 +9,7 @@ class Edge;
 class Node {
   public:
     Node() {};
-    explicit Node(std::string id);
+    explicit Node(const std::string& id);
     Node(const Node&) = delete;
     Node& operator=(const Node&) = delete;
 
