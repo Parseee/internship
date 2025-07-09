@@ -1,7 +1,9 @@
 #include "graph.h"
 
+#include <cstdint>
 #include <exception>
 #include <iostream>
+#include <limits>
 #include <sstream>
 
 void processCommands(Graph& graph) {
@@ -49,7 +51,12 @@ void processCommands(Graph& graph) {
                 auto distances = graph.shortestPaths(startNode);
 
                 for (const auto& [node, dist] : distances) {
-                    std::cout << node->getId() << " " << dist << std::endl;
+                    if (dist != std::numeric_limits<uint64_t>::max()) {
+                        std::cout << node->getId() << " " << dist << std::endl;
+                    } else {
+                        std::cout << node->getId() << " is unreachable"
+                                  << std::endl;
+                    }
                 }
             } else if (command == "MAX") {
                 std::string subcmd;

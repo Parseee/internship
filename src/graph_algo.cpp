@@ -9,6 +9,7 @@
 #include <stack>
 #include <stdexcept>
 #include <string>
+#include <sys/types.h>
 #include <unordered_map>
 #include <vector>
 
@@ -31,8 +32,8 @@ void Graph::dfs(
         if (used[next_node] == NIL) {
             dfs(next_node, used, traversal, cycled);
         } else if (used[next_node] == IN) {
-            cycled = next_node;
-            return;
+            cycled = node;
+            // return;
         }
     }
 
@@ -75,7 +76,7 @@ Graph::shortestPaths(const std::string& id) const noexcept {
 
     std::unordered_map<std::shared_ptr<Node>, uint64_t> dist;
     for (const auto& node : nodes) {
-        dist[node.second] = INT64_MAX;
+        dist[node.second] = std::numeric_limits<uint64_t>::max();
     }
     dist[start_node_ptr] = 0;
     std::set<std::pair<uint64_t, std::shared_ptr<Node>>> priority;
@@ -87,7 +88,7 @@ Graph::shortestPaths(const std::string& id) const noexcept {
         priority.erase(priority.begin());
 
         for (const auto& edge : cur_node_ptr->getOutEdges()) {
-            if (dist[edge->getFrom()] != INT64_MAX &&
+            if (dist[edge->getFrom()] != std::numeric_limits<uint64_t>::max() &&
                 dist[edge->getTo()] >
                     dist[edge->getFrom()] + edge->getWeight()) {
                 priority.erase({dist[edge->getTo()], edge->getTo()});

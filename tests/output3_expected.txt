@@ -1,0 +1,5 @@
+Found loop X->W
+X Y W 
+T Z R 
+Y X W
+5

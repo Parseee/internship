@@ -11,6 +11,17 @@ target_compile_options(project_compiler_options INTERFACE
     $<$<CONFIG:Release>:-O2>
 )
 
+find_package(Python REQUIRED)
+
+add_custom_target(
+    check
+    COMMAND ${Python_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tests/checker.py $<TARGET_FILE:graphs>
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    DEPENDS graphs
+    COMMENT "Test execution and checks"
+)
+
+
 include_directories(src include)
 
 set(SOURCES 
@@ -28,5 +39,5 @@ set(SOURCES
 add_executable(${PROJECT_NAME} ${SOURCES})
 # add target_link_options
 target_link_libraries(${PROJECT_NAME} PRIVATE project_compiler_options 
-    $<$<CONFIG:Debug>:-fsanitize=address,leak>  
+    $<$<CONFIG:Debug>:-fsanitize=address,leak> 
     $<$<CONFIG:Release>:-O2>)
