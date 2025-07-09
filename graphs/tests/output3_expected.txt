@@ -1,5 +1,5 @@
 Found loop X->W
-X Y W 
-T Z R 
-Y X W
+W X Y 
+R T Z 
+W X Y 
 5

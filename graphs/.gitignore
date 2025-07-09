@@ -1,5 +1,6 @@
-/.cache
-/build
+.cache
+build
 .vscode
 *.pdf
 *.dot
+clangd

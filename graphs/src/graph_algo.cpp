@@ -108,7 +108,7 @@ uint64_t Graph::maxFlow(const std::string& start_id,
 
     if (!start_node || !end_node) {
         std::cout << "Unknown source or sink" << std::endl;
-        return 0;
+        return std::numeric_limits<uint64_t>::max();
     }
 
     std::unordered_map<std::shared_ptr<Edge>, uint64_t> flow;

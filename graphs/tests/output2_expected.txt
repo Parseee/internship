@@ -1,8 +1,8 @@
 Found loop A->D
 A B C D 
-A D C B
+A B C D
 A 0
+B 5
 C 8
 D 10
-B 5
 3

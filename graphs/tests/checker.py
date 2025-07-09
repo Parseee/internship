@@ -37,7 +37,6 @@ class TestChecker:
         with open(expected_file, 'r') as f:
             expected = f.read().strip()
         
-        # Нормализация выводов - удаление лишних пробелов и пустых строк
         actual_lines = [line.strip() for line in actual.split('\n') if line.strip()]
         expected_lines = [line.strip() for line in expected.split('\n') if line.strip()]
         
