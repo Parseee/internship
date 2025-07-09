@@ -6,7 +6,6 @@ void Graph::dump() {
 
     std::ofstream graph_dump("graph.dot");
 
-    // TODO: make directed
     graph_dump << "strict digraph GG {" << std::endl
                << "node [shape=circle];" << std::endl;
 

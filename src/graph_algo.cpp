@@ -243,7 +243,6 @@ Graph::findSCC() {
     std::unordered_map<std::shared_ptr<Node>, bool> used;
     uint64_t time = 0;
 
-    // TODO: rewrite in weak ptr
     std::stack<std::shared_ptr<Node>> stack;
     std::unordered_map<std::shared_ptr<Node>, bool> on_stack;
 
@@ -255,7 +254,6 @@ Graph::findSCC() {
         }
     }
 
-    // make it simplier...
     std::unordered_map<uint64_t, std::vector<std::shared_ptr<Node>>> scc;
 
     for (const auto& [node, low] : low_id) {
