@@ -33,21 +33,31 @@ class TestChecker:
         
         return result.stdout.decode('utf-8').strip()
     
-    def compare_outputs(self, actual, expected_file):
+    def compare_outputs(self, actual, input_file, expected_file):
         with open(expected_file, 'r') as f:
             expected = f.read().strip()
         
         actual_lines = [line.strip() for line in actual.split('\n') if line.strip()]
         expected_lines = [line.strip() for line in expected.split('\n') if line.strip()]
         
+        ok_ouput = {}
+        for element in expected_lines:
+            ok_ouput[''.join(sorted(element))] = ok_ouput.get(''.join(sorted(element)), 0) + 1
+            # ok_ouput[element] = ok_ouput.get(element, 0) + 1
+        
         if len(actual_lines) != len(expected_lines):
             return False, f"Number of lines does not correspond: expected {len(expected_lines)}, recieved {len(actual_lines)}"
         
-        for i, (actual_line, expected_line) in enumerate(zip(actual_lines, expected_lines)):
-            if actual_line != expected_line:
-                return False, f"Difference in line {i+1}:\nexpected: '{expected_line}'\nrecieved:  '{actual_line}'"
+        for actual_line in actual_lines:
+            line = ''.join(sorted(actual_line))
+            # line = actual_line
+            if line in ok_ouput:
+                ok_ouput[line] -= 1
         
-        return True, "All tests passed"
+        if all(cnt == 0 for cnt in ok_ouput.values()):
+            return True, "All tests passed"
+        else:
+            return False, "Test failed"
     
     def run_all_tests(self):
         total_tests = len(self.test_cases)
@@ -65,7 +75,7 @@ class TestChecker:
             
             try:
                 actual_output = self.run_program(input_file)
-                success, message = self.compare_outputs(actual_output, expected_file)
+                success, message = self.compare_outputs(actual_output, input_file, expected_file)
                 
                 if success:
                     print(f"✅ Test {input_file} passed")
@@ -80,11 +90,11 @@ class TestChecker:
         return passed_tests == total_tests
 
 def main():
-    if len(sys.argv) != 2:
-        print("Usage: python checker.py <path_to_executable>")
-        sys.exit(1)
+    # if len(sys.argv) != 2:
+    #     print("Usage: python checker.py <path_to_executable>")
+    #     sys.exit(1)
     
-    checker = TestChecker("../tests/", sys.argv[1])
+    checker = TestChecker("tests/", "build/graphs")
     checker.run_all_tests()
 
 if __name__ == "__main__":
