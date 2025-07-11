@@ -92,9 +92,11 @@ void processCommands(Graph& graph) {
                 std::string startNode;
                 iss >> startNode;
 
-                std::vector<
-                    std::pair<uint64_t, std::vector<std::shared_ptr<Node>>>>
-                    sccs(graph.findSCC().begin(), graph.findSCC().end());
+                using vectorOfComponents = std::vector<
+                    std::pair<uint64_t, std::vector<std::shared_ptr<Node>>>>;
+
+                vectorOfComponents sccs(graph.findSCC().begin(),
+                                        graph.findSCC().end());
 
                 std::sort(sccs.begin(), sccs.end(), [](auto l, auto r) {
                     return l.second.size() < r.second.size();

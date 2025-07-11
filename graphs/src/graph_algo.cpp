@@ -7,7 +7,6 @@
 #include <queue>
 #include <set>
 #include <stack>
-#include <stdexcept>
 #include <string>
 #include <sys/types.h>
 #include <unordered_map>
@@ -21,7 +20,7 @@ void Graph::dfs(
     std::shared_ptr<Node> node,
     std::unordered_map<std::shared_ptr<Node>, enum vertex_state>& used,
     std::vector<std::shared_ptr<Node>>& traversal,
-    std::shared_ptr<Node>& cycled) const {
+    std::vector<std::weak_ptr<Edge>>& cycled) const {
     traversal.push_back(node);
 
     used[node] = IN;
@@ -32,8 +31,7 @@ void Graph::dfs(
         if (used[next_node] == NIL) {
             dfs(next_node, used, traversal, cycled);
         } else if (used[next_node] == IN) {
-            cycled = node;
-            // return;
+            cycled.push_back(*edge_it);
         }
     }
 
@@ -54,12 +52,16 @@ Graph::RPO(const std::string& id) const noexcept {
     std::vector<std::shared_ptr<Node>> traversal;
     std::unordered_map<std::shared_ptr<Node>, enum vertex_state> used;
 
-    std::shared_ptr<Node> cycle_node = nullptr;
-    dfs(start_node, used, traversal, cycle_node);
-    if (cycle_node) {
-        std::cout << "Found loop " + start_node->getId() + "->" +
-                         cycle_node->getId()
-                  << std::endl;
+    std::vector<std::weak_ptr<Edge>> cycles;
+    dfs(start_node, used, traversal, cycles);
+    if (!cycles.empty()) {
+        for (const auto& e : cycles) {
+            if (auto edge = e.lock()) {
+                std::cout << "Found loop " + edge->getFrom()->getId() + "->" +
+                                 edge->getTo()->getId()
+                          << std::endl;
+            }
+        }
     }
 
     return traversal;
@@ -79,7 +81,7 @@ Graph::shortestPaths(const std::string& id) const noexcept {
         dist[node.second] = std::numeric_limits<uint64_t>::max();
     }
     dist[start_node_ptr] = 0;
-    std::set<std::pair<uint64_t, std::shared_ptr<Node>>> priority;
+    coolPriorityQueue priority;
 
     priority.insert({0, start_node_ptr});
 
@@ -254,7 +256,7 @@ Graph::findSCC() {
         }
     }
 
-    std::unordered_map<uint64_t, std::vector<std::shared_ptr<Node>>> scc;
+    componentsIDs scc;
 
     for (const auto& [node, low] : low_id) {
         scc[low].push_back(node);

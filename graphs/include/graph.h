@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <list>
 #include <memory>
+#include <set>
 #include <stack>
 #include <string>
 #include <unordered_map>
@@ -13,6 +14,11 @@
 
 class Graph {
   public:
+    using componentsIDs =
+        std::unordered_map<uint64_t, std::vector<std::shared_ptr<Node>>>;
+    using coolPriorityQueue =
+        std::set<std::pair<uint64_t, std::shared_ptr<Node>>>;
+
     Graph() {}
     bool addNode(const std::string& id);
     bool removeNode(const std::string& id);
@@ -32,7 +38,7 @@ class Graph {
     std::unordered_map<std::shared_ptr<Node>, uint64_t>
     shortestPaths(const std::string& id) const noexcept;
     uint64_t maxFlow(const std::string& start_id, const std::string& end_id);
-    std::unordered_map<uint64_t, std::vector<std::shared_ptr<Node>>> findSCC();
+    componentsIDs findSCC();
 
     void dump();
 
@@ -45,7 +51,7 @@ class Graph {
     void dfs(std::shared_ptr<Node> node,
              std::unordered_map<std::shared_ptr<Node>, enum vertex_state>& used,
              std::vector<std::shared_ptr<Node>>& traversal,
-             std::shared_ptr<Node>& cycled) const;
+             std::vector<std::weak_ptr<Edge>>& cycled) const;
     bool searchPath(
         std::shared_ptr<Node> start, std::shared_ptr<Node> end,
         std::unordered_map<std::shared_ptr<Node>, std::shared_ptr<Edge>>& path,
