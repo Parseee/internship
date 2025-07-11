@@ -43,7 +43,6 @@ class TestChecker:
         ok_ouput = {}
         for element in expected_lines:
             ok_ouput[''.join(sorted(element))] = ok_ouput.get(''.join(sorted(element)), 0) + 1
-            # ok_ouput[element] = ok_ouput.get(element, 0) + 1
         
         if len(actual_lines) != len(expected_lines):
             return False, f"Number of lines does not correspond: expected {len(expected_lines)}, recieved {len(actual_lines)}"
@@ -90,11 +89,11 @@ class TestChecker:
         return passed_tests == total_tests
 
 def main():
-    # if len(sys.argv) != 2:
-    #     print("Usage: python checker.py <path_to_executable>")
-    #     sys.exit(1)
+    if len(sys.argv) != 2:
+        print("Usage: python checker.py <path_to_executable>")
+        sys.exit(1)
     
-    checker = TestChecker("tests/", "build/graphs")
+    checker = TestChecker("../tests/", sys.argv[1])
     checker.run_all_tests()
 
 if __name__ == "__main__":
