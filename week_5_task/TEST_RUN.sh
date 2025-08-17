@@ -6,11 +6,16 @@
 # -DLLVM_PARALLEL_COMPILE_JOBS=8 \
 # ../llvm
 
-cd ./llvm-basic-pass/build
+export LLVM_DIR=./build/bin/llvm
+cd ./llvm-my-pass/build
+cmake -DLT_LLVM_INSTALL_DIR=$LLVM_DIR 
 make
 cd ../..
 
-./build/bin/clang -S -o0 -emit-llvm llvm-basic-pass/tests/input.c -o input.ll
-./build/bin/opt -load-pass-plugin ./llvm-basic-pass/build/libMyPass.so -passes=MyPass -disable-output input.ll
-./build/bin/opt -passes=dot-cfg -cfg-func-name="req1" input.ll -cfg-dot-filename-prefix=cfg_output -o /dev/null
+# ./build/bin/clang -S -O0 -emit-llvm ./llvm-my-pass/tests/input.c -o input.ll
+# ./build/bin/opt -load-pass-plugin ./llvm-my-pass/build/libMyPass.so -passes=MyPass -disable-output input.ll
+# ./build/bin/opt -passes=dot-cfg -cfg-func-name="req1" input.ll -cfg-dot-filename-prefix=cfg_output -o /dev/null
+clang -S -O0 -emit-llvm ./llvm-my-pass/tests/input.c -o input.ll
+opt -load-pass-plugin ./llvm-my-pass/build/libMyPass.so -passes=MyPass -disable-output input.ll
+opt -passes=dot-cfg -cfg-func-name="req1" input.ll -cfg-dot-filename-prefix=cfg_output -o /dev/null
 dot -Tpng cfg_output.req1.dot -o cfg_output.req1.png

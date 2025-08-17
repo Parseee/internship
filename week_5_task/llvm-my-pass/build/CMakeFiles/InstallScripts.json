@@ -1,0 +1,7 @@
+{
+	"InstallScripts" : 
+	[
+		"/workspaces/llvm-internship-mcst/internship/week_5_task/llvm-my-pass/build/cmake_install.cmake"
+	],
+	"Parallel" : false
+}
