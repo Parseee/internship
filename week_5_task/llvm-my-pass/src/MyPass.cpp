@@ -36,8 +36,8 @@ void enumerateBasicBlocks(Function &F) {
     return;
 }
 
-typedef std::vector<std::pair<const BasicBlock *, const BasicBlock *>>
-    VectorOfLoops;
+using VectorOfLoops = std::vector<std::pair<const BasicBlock *, 
+                                  const BasicBlock *>>;
 const std::vector<StringRef> rpoNumbering(Function &F, VectorOfLoops &Loops) {
     std::stack<const BasicBlock *> DfsStack;
     enum VisitedState { NIL = 0, IN, OUT };
