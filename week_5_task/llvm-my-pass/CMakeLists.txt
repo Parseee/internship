@@ -5,11 +5,12 @@ project(MyPass)
 # 1. LOAD LLVM CONFIGURATION
 #===============================================================================
 # Set this to a valid LLVM installation dir
-set(LT_LLVM_INSTALL_DIR "/workspaces/llvm-internship-mcst/llvm-project/build/" CACHE PATH "LLVM installation directory")
+# set(LT_LLVM_INSTALL_DIR "/workspaces/llvm-internship-mcst/internship/week_5_task/llvm/build/" CACHE PATH "LLVM installation directory")
+set(LT_LLVM_INSTALL_DIR "/usr/lib/llvm-11/" CACHE PATH "LLVM installation directory")
 
 # Add the location of LLVMConfig.cmake to CMake search paths (so that
 # find_package can locate it)
-list(APPEND CMAKE_PREFIX_PATH "${LT_LLVM_INSTALL_DIR}/lib/cmake/llvm/")
+# list(APPEND CMAKE_PREFIX_PATH "${LT_LLVM_INSTALL_DIR}/lib/cmake/llvm/")
 
 find_package(LLVM REQUIRED CONFIG)
 
