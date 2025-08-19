@@ -1,0 +1,3 @@
+[submodule "week_5_task/llvm"]
+	path = week_5_task/llvm
+	url = https://github.com/llvm/llvm-project.git
