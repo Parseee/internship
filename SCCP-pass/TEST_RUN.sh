@@ -16,7 +16,7 @@
 # ./build/bin/opt -load-pass-plugin ./llvm-my-pass/build/libMyPass.so -passes=MyPass -disable-output input.ll
 # ./build/bin/opt -passes=dot-cfg -cfg-func-name="req1" input.ll -cfg-dot-filename-prefix=cfg_output -o /dev/null
 clang -S -O0 -emit-llvm tests/input.c -o input.ll
-opt -load-pass-plugin build/libMyPass.so -passes=MyPass -disable-output input.ll
+opt -load-pass-plugin build/libMyPass.so -passes=MySCCP -disable-output input.ll
 # my ignore -cfg-func-name because of older version of opt
 # opt -passes=dot-cfg -cfg-func-name="req1" input.ll -cfg-dot-filename-prefix=cfg_output -o /dev/null
 # dot -Tpng cfg_output.req1.dot -o cfg_output.req1.png
