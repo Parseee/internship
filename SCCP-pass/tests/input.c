@@ -35,11 +35,35 @@
 // }
 
 int req1() {
-    int a = 5;
-    int b = 5;
+    int d;
+    if (0) {
+        int a = 5;
+        int b = 5;
 
-    int c = a + b - 2;
-    int d = c * 2 + 3;
+        int c = a + b - 2;
+        d = c * 2 + 3;
+    }
+
+    return d * 4;
+}
+
+int req2() {
+    int d;
+    if (0) {
+        int a = 5;
+        int b = 5;
+
+        int c = a + b - 2;
+        d = c * 2 + 3;
+    }
+
+    if (1) {
+        d = 1;
+        d = 2;
+        d = 3;
+        d = 4;
+        d = 5;
+    }
 
     return d * 4;
 }

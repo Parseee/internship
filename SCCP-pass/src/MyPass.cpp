@@ -96,6 +96,8 @@ struct MySCCP : PassInfoMixin<MySCCP> {
             (OldState.LatState == LatticeState::CONST &&
              OldState.Constant != NewState.Constant)) {
             OldState = NewState;
+            // outs() << int(LatticeVector[V].LatState) << " " << V->getType()
+            //        << '\n';
             SsaWL.push(V);
         }
     }
@@ -117,6 +119,10 @@ struct MySCCP : PassInfoMixin<MySCCP> {
             } else {
                 LatticeVector[&(*Iit)] = ValueState(LatticeState::UNDEF);
             }
+        }
+
+        for (Argument &Arg : F.args()) {
+            LatticeVector[&Arg] = ValueState(LatticeState::OVERDEF);
         }
 
         return;
@@ -165,33 +171,40 @@ struct MySCCP : PassInfoMixin<MySCCP> {
     }
 
     void visitBinOp(Instruction *Inst) {
-        auto &ValState = LatticeVector[Inst];
-
-        // TODO: check validity
-        // if (ValState.LatState == LatticeState::CONST) { // ?
-        //     updateValue(Inst, ValState);                // ??
-        //     return;
-        // }
-
         auto *LHS = Inst->getOperand(0);
         auto *RHS = Inst->getOperand(1);
 
         auto &LHSState = LatticeVector[LHS];
         auto &RHSState = LatticeVector[RHS];
 
-        // for (const auto &[key, val] : LatticeVector) {
-        //     outs() << key << " " << dyn_cast<Instruction>(key) << " "
-        //            << int(val.LatState) << '\n';
-        // }
+        if (auto *ConstOper = dyn_cast<Constant>(LHS)) {
+            LHSState.Constant = ConstOper;
+            LHSState.LatState = LatticeState::CONST;
+        }
+        if (auto *ConstOper = dyn_cast<Constant>(RHS)) {
+            RHSState.Constant = ConstOper;
+            RHSState.LatState = LatticeState::CONST;
+        }
 
         if (LHSState.LatState == LatticeState::CONST &&
             RHSState.LatState == LatticeState::CONST) {
-            if (Constant *Res = ConstantFoldInstruction(
-                    Inst, Inst->getModule()->getDataLayout())) {
+
+            SmallVector<Constant *, 2> Operands = {LHSState.Constant,
+                                                   RHSState.Constant};
+
+            if (Constant *Res = ConstantFoldInstOperands(
+                    Inst, Operands, Inst->getModule()->getDataLayout())) {
                 updateValue(Inst, ValueState(Res));
                 return;
             }
         }
+
+        if (LHSState.LatState == LatticeState::OVERDEF ||
+            RHSState.LatState == LatticeState::OVERDEF) { // excessive?
+            updateValue(Inst, ValueState(LatticeState::OVERDEF));
+            return;
+        }
+
         updateValue(Inst, ValueState(LatticeState::OVERDEF)); // mark OVERDEF
     }
 
@@ -209,13 +222,9 @@ struct MySCCP : PassInfoMixin<MySCCP> {
         case Instruction::ICmp:
             visitBinOp(Inst);
             break;
-        case Instruction::Load:
         case Instruction::Call:
             LatticeVector[Inst] = ValueState(LatticeState::OVERDEF);
             break;
-        // case Instruction::Store:
-        //     LatticeVector[Inst] = ValueState(LatticeState::CONST);
-        //     break;
         default:
             // TODO: for other instructions, mark as overdefined if not constant
             if (!isa<Constant>(Inst)) {
@@ -228,7 +237,6 @@ struct MySCCP : PassInfoMixin<MySCCP> {
     bool transformFunction(Function &F, DominatorTree &DT) {
         bool Changed = false;
 
-        // Replace instructions with constants where possible
         for (BasicBlock &BB : F) {
             for (Instruction &I : BB) {
                 ValueState &State = LatticeVector[&I];
@@ -240,7 +248,6 @@ struct MySCCP : PassInfoMixin<MySCCP> {
             }
         }
 
-        // Remove dead blocks
         SmallVector<BasicBlock *, 32> DeadBlocks;
         for (BasicBlock &BB : F) {
             if (!ExecutableBlocks[&BB]) {
@@ -284,12 +291,12 @@ struct MySCCP : PassInfoMixin<MySCCP> {
                 }
 
                 // FIXME: const_cast?
-                auto *SingleSuccessor =
-                    const_cast<BasicBlock *>(Dest->getSingleSuccessor());
-                if (SingleSuccessor &&
-                    ExecutableBlocks[SingleSuccessor] == false) {
-                    CfgWL.push(SingleSuccessor);
-                }
+                // auto *SingleSuccessor =
+                //     const_cast<BasicBlock *>(Dest->getSingleSuccessor());
+                // if (SingleSuccessor &&
+                //     ExecutableBlocks[SingleSuccessor] == false) {
+                //     CfgWL.push(SingleSuccessor);
+                // }
             }
         }
 
@@ -361,7 +368,7 @@ extern "C" LLVM_ATTRIBUTE_WEAK ::llvm::PassPluginLibraryInfo
 
 llvmGetPassPluginInfo() {
     return {.APIVersion = LLVM_PLUGIN_API_VERSION,
-            .PluginName = "MySCCP",
+            .PluginName = "My_SCCP",
             .PluginVersion = "v0.1",
             .RegisterPassBuilderCallbacks = [](PassBuilder &PB) {
                 // Register your pass
