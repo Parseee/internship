@@ -1,3 +1,4 @@
+#include <llvm-11/llvm/ADT/SmallVector.h>
 #include <llvm/ADT/DenseMap.h>
 #include <llvm/Analysis/AliasAnalysis.h>
 #include <llvm/Analysis/ConstantFolding.h>
@@ -96,8 +97,6 @@ struct MySCCP : PassInfoMixin<MySCCP> {
             (OldState.LatState == LatticeState::CONST &&
              OldState.Constant != NewState.Constant)) {
             OldState = NewState;
-            // outs() << int(LatticeVector[V].LatState) << " " << V->getType()
-            //        << '\n';
             SsaWL.push(V);
         }
     }
@@ -112,8 +111,8 @@ struct MySCCP : PassInfoMixin<MySCCP> {
         ExecutableBlocks[&F.getEntryBlock()] = true;
 
         for (inst_iterator Iit = inst_begin(F); Iit != inst_end(F); ++Iit) {
-            outs() << Iit->getOpcodeName() << " " << isa<Constant>(*Iit)
-                   << "\n";
+            // outs() << Iit->getOpcodeName() << " " << isa<Constant>(*Iit)
+            //        << "\n";
             if (isa<Constant>(&(*Iit))) {
                 LatticeVector[&(*Iit)] = ValueState(cast<Constant>(&(*Iit)));
             } else {
@@ -135,17 +134,26 @@ struct MySCCP : PassInfoMixin<MySCCP> {
         }
 
         auto *BCond = BInst->getCondition();
+        if (Constant *CInst = ConstantFoldInstruction(
+                BInst, BInst->getModule()->getDataLayout())) {
+            if (auto *CI = dyn_cast<ConstantInt>(CInst)) {
+                bool CondVal = CI->getZExtValue();
+                markEdgeExecutable(nullptr,
+                                   BInst->getSuccessor(CondVal ? 0 : 1));
+            }
+        }
+
         auto &BState = LatticeVector[BCond];
 
         if (BState.LatState == LatticeState::CONST) {
             if (auto *CI = dyn_cast<ConstantInt>(BCond)) {
                 bool CondVal = CI->getZExtValue();
-                markEdgeExecutable(BInst->getParent(),
+                markEdgeExecutable(nullptr,
                                    BInst->getSuccessor(CondVal ? 0 : 1));
             }
-        } else if (BState.LatState == LatticeState::UNDEF) {
-            markEdgeExecutable(BInst->getParent(), BInst->getSuccessor(0));
-            markEdgeExecutable(BInst->getParent(), BInst->getSuccessor(1));
+        } else {
+            markEdgeExecutable(nullptr, BInst->getSuccessor(0));
+            markEdgeExecutable(nullptr, BInst->getSuccessor(1));
         }
     }
 
@@ -209,6 +217,7 @@ struct MySCCP : PassInfoMixin<MySCCP> {
     }
 
     void visitOp(Instruction *Inst) {
+        outs() << Inst->getOpcodeName() << '\n';
         switch (Inst->getOpcode()) {
         case Instruction::Br:
             visitBranch(cast<BranchInst>(Inst));
